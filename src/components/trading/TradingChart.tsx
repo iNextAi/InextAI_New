@@ -17,7 +17,7 @@ export const TradingChart = ({ asset, mode }: TradingChartProps) => {
 
   useEffect(() => {
     const fetchData = async () => {
-      const symbol = `${asset}USDT`.toUpperCase(); // e.g. ICPUSDT
+      const symbol = `${asset}USDT`.toUpperCase(); 
       try {
         const response = await axios.get(
           `https://api.binance.com/api/v3/ticker/24hr?symbol=${symbol}`

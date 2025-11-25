@@ -22,10 +22,10 @@ const CustomDot = (props: any) => {
   const { cx, cy, payload, onHover } = props;
   if (!payload || payload.trades === 0) return null;
 
-  // Solid professional colors
+  
   const isLoss = payload.pnl < 0;
-  const strokeColor = isLoss ? '#EF4444' : '#10B981'; // Red-500 or Emerald-500
-  const fillColor = '#0F172A'; // Dark background color to create a "cutout" look
+  const strokeColor = isLoss ? '#EF4444' : '#10B981';
+  const fillColor = '#0F172A'; 
 
   return (
     <g>
@@ -44,7 +44,6 @@ const CustomDot = (props: any) => {
   );
 };
 
-// Clean Professional Tooltip
 const CustomTooltip = ({ active, payload }: any) => {
   if (!active || !payload || !payload[0]) return null;
   const data = payload[0].payload;
@@ -78,9 +77,7 @@ export function AdvancedPerformanceChart({ isWalletConnected = false }: Advanced
   if (!isWalletConnected) {
     return (
       <Card className="h-full bg-background/50 border-blue-900/20 backdrop-blur-sm flex items-center justify-center p-6 relative overflow-hidden">
-         {/* Subtle pattern overlay */}
         <div className="absolute inset-0 bg-[linear-gradient(rgba(30,58,138,0.05)_1px,transparent_1px),linear-gradient(90deg,rgba(30,58,138,0.05)_1px,transparent_1px)] bg-[size:20px_20px]" />
-        
         <div className="z-10 flex flex-col items-center text-center max-w-[200px]">
           <div className="w-16 h-16 rounded-2xl bg-blue-950/50 border border-blue-900/30 flex items-center justify-center mb-4 shadow-inner">
             <Lock className="w-6 h-6 text-blue-400" />
@@ -94,7 +91,6 @@ export function AdvancedPerformanceChart({ isWalletConnected = false }: Advanced
 
   return (
     <Card className="h-full bg-background border-border/40 flex flex-col shadow-sm">
-      {/* Header */}
       <div className="px-4 py-3 border-b border-border/40 flex items-center justify-between">
         <div className="flex items-center gap-2">
           <div className="h-4 w-1 bg-blue-600 rounded-full" />
@@ -118,7 +114,6 @@ export function AdvancedPerformanceChart({ isWalletConnected = false }: Advanced
         </div>
       </div>
 
-      {/* Stats Bar */}
       <div className="px-4 py-3 flex items-center justify-between bg-secondary/10">
         <div>
           <span className="text-[10px] uppercase text-muted-foreground font-semibold tracking-wider">Current PNL</span>
@@ -131,8 +126,7 @@ export function AdvancedPerformanceChart({ isWalletConnected = false }: Advanced
           <span className="text-xs font-bold text-emerald-500">+12.5%</span>
         </div>
       </div>
-
-      {/* Chart */}
+      
       <div className="flex-1 w-full min-h-0 relative">
         <ResponsiveContainer width="100%" height="100%">
           <AreaChart data={tradeData} margin={{ top: 20, right: 0, left: 0, bottom: 0 }}>
