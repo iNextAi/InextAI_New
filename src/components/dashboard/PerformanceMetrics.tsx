@@ -1,6 +1,6 @@
 import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Shield, Percent, Plus, BarChart3, Lock } from "lucide-react";
+import { Shield, Lock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 
 interface PerformanceMetricsProps {
@@ -10,143 +10,90 @@ interface PerformanceMetricsProps {
 export function PerformanceMetrics({ isWalletConnected = false }: PerformanceMetricsProps) {
   if (!isWalletConnected) {
     return (
-      <Card className="glass-card border-primary/20 p-2 md:p-2.5 h-full flex flex-col items-center justify-center">
-        <div className="flex flex-col items-center gap-3 text-center">
-          <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
-            <Lock className="w-6 h-6 text-primary" />
-          </div>
-          <div>
-            <h3 className="text-sm font-bold text-foreground mb-1">PERFORMANCE Overview</h3>
-            <p className="text-xs text-muted-foreground">Connect your wallet to view metrics</p>
-          </div>
+      <Card className="h-full bg-background/50 border-blue-900/20 flex flex-col items-center justify-center p-6 text-center">
+        <div className="w-12 h-12 rounded-full bg-secondary flex items-center justify-center mb-3">
+          <Lock className="w-5 h-5 text-muted-foreground" />
         </div>
+        <h3 className="text-sm font-semibold">Metrics Locked</h3>
       </Card>
     );
   }
-  // Donut chart data
-  const data = {
-    profit: 60,
-    loss: 30,
-    breakEven: 10
-  };
-  
-  const total = data.profit + data.loss + data.breakEven;
-  const profitAngle = (data.profit / total) * 360;
-  const lossAngle = (data.loss / total) * 360;
-  const breakEvenAngle = (data.breakEven / total) * 360;
 
-  const radius = 40;
-  const strokeWidth = 10;
-  const normalizedRadius = radius - strokeWidth * 2;
+  const data = { profit: 60, loss: 30, breakEven: 10 };
+  const total = 100;
+  
+  // Clean SVG calculation logic
+  const radius = 38;
+  const stroke = 6;
+  const normalizedRadius = radius - stroke * 2;
   const circumference = normalizedRadius * 2 * Math.PI;
+  const strokeDashoffset = (percent: number) => circumference - (percent / 100) * circumference;
 
   return (
-    <Card className="glass-card border-primary/20 p-1.5 md:p-2 h-full flex flex-col overflow-hidden">
-      {/* Header Section - Fixed at top */}
-      <div className="mb-1.5 md:mb-2 flex-shrink-0">
-        <div className="flex items-center justify-between mb-1">
-          <h3 className="text-[10px] md:text-xs font-bold text-foreground flex items-center gap-1">
-            <Shield className="w-2.5 h-2.5 md:w-3 md:h-3 text-primary" />
-            Performance
-          </h3>
+    <Card className="h-full bg-background border-border/40 flex flex-col overflow-hidden">
+      {/* Header */}
+      <div className="p-3 border-b border-border/40 flex items-center justify-between">
+        <div className="flex items-center gap-2">
+          <Shield className="w-3.5 h-3.5 text-blue-500" />
+          <h3 className="text-xs font-bold uppercase tracking-wider text-muted-foreground">Key Metrics</h3>
         </div>
-        <div className="flex items-baseline gap-1.5">
-          <div className="text-sm md:text-base font-bold text-success">+343.6%</div>
-          <Badge variant="outline" className="text-success border-success/30 text-[8px] px-1 py-0">
-            Total PNL
-          </Badge>
-        </div>
+        <Badge variant="outline" className="text-[10px] border-emerald-500/30 text-emerald-500 bg-emerald-500/5 font-mono">
+          Live
+        </Badge>
       </div>
 
-      {/* Scrollable Content Area - Hidden Scrollbar */}
-      <ScrollArea className="flex-1 [&>div>div]:!overflow-hidden [&>div>div]:!-mr-1">
-        <div className="space-y-1.5 md:space-y-2 pr-1">
-          {/* Stats Grid */}
-          <div className="grid grid-cols-2 gap-0.5 md:gap-1">
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Best Trade</div>
-              <div className="text-[10px] md:text-xs font-bold text-success">+86.6%</div>
+      <ScrollArea className="flex-1">
+        <div className="p-3 space-y-4">
+          
+          {/* Donut Chart - Minimalist & Clean */}
+          <div className="flex items-center gap-4 bg-secondary/20 p-3 rounded-xl border border-blue-900/10">
+            <div className="relative w-20 h-20 flex-shrink-0">
+               {/* Background Circle */}
+               <svg height="100%" width="100%" viewBox="0 0 80 80" className="rotate-[-90deg]">
+                 <circle cx="40" cy="40" r={normalizedRadius} fill="transparent" stroke="#1e293b" strokeWidth={stroke} />
+                 {/* Segments */}
+                 <circle cx="40" cy="40" r={normalizedRadius} fill="transparent" stroke="#10B981" strokeWidth={stroke} 
+                         strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeDashoffset(data.profit)} />
+                 <circle cx="40" cy="40" r={normalizedRadius} fill="transparent" stroke="#EF4444" strokeWidth={stroke} 
+                         strokeDasharray={`${circumference} ${circumference}`} strokeDashoffset={strokeDashoffset(data.profit + data.loss)} className="opacity-80" />
+               </svg>
+               <div className="absolute inset-0 flex items-center justify-center flex-col">
+                 <span className="text-[10px] text-muted-foreground">Win Rate</span>
+                 <span className="text-sm font-bold text-foreground">60%</span>
+               </div>
             </div>
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Worst Trade</div>
-              <div className="text-[10px] md:text-xs font-bold text-destructive">-26.6%</div>
-            </div>
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Avg Trade</div>
-              <div className="text-[10px] md:text-xs font-bold text-primary">+26.6%</div>
-            </div>
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Win Rate</div>
-              <div className="text-[10px] md:text-xs font-bold text-success">56.6%</div>
-            </div>
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Degen Score</div>
-              <div className="text-[10px] md:text-xs font-bold text-primary">71</div>
-            </div>
-            <div className="glass-card p-0.5 md:p-1 rounded-lg border border-primary/10">
-              <div className="text-[8px] md:text-[9px] text-muted-foreground mb-0.5">Trades</div>
-              <div className="text-[10px] md:text-xs font-bold text-foreground">20</div>
+            
+            <div className="flex-1 space-y-1.5">
+              <div className="flex justify-between items-center text-[10px]">
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-emerald-500"></div><span className="text-muted-foreground">Profit</span></div>
+                <span className="font-mono text-foreground">60%</span>
+              </div>
+              <div className="flex justify-between items-center text-[10px]">
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-red-500"></div><span className="text-muted-foreground">Loss</span></div>
+                <span className="font-mono text-foreground">30%</span>
+              </div>
+              <div className="flex justify-between items-center text-[10px]">
+                <div className="flex items-center gap-1.5"><div className="w-1.5 h-1.5 rounded-full bg-amber-500"></div><span className="text-muted-foreground">Neutral</span></div>
+                <span className="font-mono text-foreground">10%</span>
+              </div>
             </div>
           </div>
 
-          {/* Donut Chart Section */}
-          <div className="flex flex-col items-center justify-center py-2">
-            <svg width={radius * 2} height={radius * 2} className="w-10 h-10 md:w-12 md:h-12">
-              <g transform={`translate(${radius}, ${radius}) rotate(-90)`}>
-                {/* Profit segment */}
-                <circle
-                  cx={0}
-                  cy={0}
-                  r={normalizedRadius}
-                  stroke="hsl(var(--success))"
-                  strokeWidth={strokeWidth}
-                  fill="transparent"
-                  strokeDasharray={`${(profitAngle / 360) * circumference} ${circumference}`}
-                  strokeLinecap="round"
-                />
-                {/* Loss segment */}
-                <circle
-                  cx={0}
-                  cy={0}
-                  r={normalizedRadius}
-                  stroke="hsl(var(--destructive))"
-                  strokeWidth={strokeWidth}
-                  fill="transparent"
-                  strokeDasharray={`${(lossAngle / 360) * circumference} ${circumference}`}
-                  strokeDashoffset={-((profitAngle / 360) * circumference)}
-                  strokeLinecap="round"
-                />
-                {/* Break-even segment */}
-                <circle
-                  cx={0}
-                  cy={0}
-                  r={normalizedRadius}
-                  stroke="hsl(var(--warning))"
-                  strokeWidth={strokeWidth}
-                  fill="transparent"
-                  strokeDasharray={`${(breakEvenAngle / 360) * circumference} ${circumference}`}
-                  strokeDashoffset={-(((profitAngle + lossAngle) / 360) * circumference)}
-                  strokeLinecap="round"
-                />
-              </g>
-            </svg>
-            
-            {/* Legend */}
-            <div className="flex items-center gap-2 md:gap-3 mt-1.5 md:mt-2 text-[9px] md:text-[10px]">
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-success rounded-full"></div>
-                <span className="text-muted-foreground">Profit</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-destructive rounded-full"></div>
-                <span className="text-muted-foreground">Loss</span>
-              </div>
-              <div className="flex items-center gap-1">
-                <div className="w-1.5 h-1.5 bg-warning rounded-full"></div>
-                <span className="text-muted-foreground">Break-Even</span>
-              </div>
-            </div>
+          {/* Stats Grid - Professional Borders */}
+          <div className="grid grid-cols-2 gap-px bg-border/40 border border-border/40 rounded-lg overflow-hidden">
+             {[
+               { label: "Best Trade", val: "+86.6%", color: "text-emerald-500" },
+               { label: "Worst Trade", val: "-26.6%", color: "text-red-500" },
+               { label: "Avg Trade", val: "+26.6%", color: "text-blue-400" },
+               { label: "Degen Score", val: "71/100", color: "text-amber-500" }
+             ].map((item, i) => (
+               <div key={i} className="bg-background/95 p-2.5 flex flex-col items-center justify-center hover:bg-secondary/20 transition-colors">
+                 <span className="text-[9px] text-muted-foreground uppercase tracking-wider mb-1">{item.label}</span>
+                 <span className={`text-xs font-bold font-mono ${item.color}`}>{item.val}</span>
+               </div>
+             ))}
           </div>
+
         </div>
       </ScrollArea>
     </Card>
