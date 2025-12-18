@@ -1,8 +1,15 @@
-import { useEffect, useRef, useState } from 'react';
-import { Card } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { TrendingUp, TrendingDown, BarChart3, LineChart, Settings, RefreshCw } from 'lucide-react';
+import { useEffect, useRef, useState } from "react";
+import { Card } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import {
+  TrendingUp,
+  TrendingDown,
+  BarChart3,
+  LineChart,
+  Settings,
+  RefreshCw,
+} from "lucide-react";
 
 interface ProfessionalChartProps {
   symbol: string;
@@ -27,48 +34,53 @@ interface CandleData {
   volume: number;
 }
 
-export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps) => {
+export const ProfessionalChart = ({
+  symbol,
+  className,
+}: ProfessionalChartProps) => {
   const [currentPrice, setCurrentPrice] = useState<CryptoPrice>({
     symbol: symbol,
     price: 0,
     change24h: 0,
     volume24h: 0,
     high24h: 0,
-    low24h: 0
+    low24h: 0,
   });
-  
-  const [selectedTimeframe, setSelectedTimeframe] = useState('1h');
-  const [chartType, setChartType] = useState<'candlestick' | 'line'>('candlestick');
+
+  const [selectedTimeframe, setSelectedTimeframe] = useState("1h");
+  const [chartType, setChartType] = useState<"candlestick" | "line">(
+    "candlestick"
+  );
   const [isLoading, setIsLoading] = useState(true);
   const [candleData, setCandleData] = useState<CandleData[]>([]);
   const [error, setError] = useState<string | null>(null);
 
   const timeframes = [
-    { label: '1m', value: '1m' },
-    { label: '5m', value: '5m' },
-    { label: '15m', value: '15m' },
-    { label: '1h', value: '1h' },
-    { label: '4h', value: '4h' },
-    { label: '1d', value: '1d' },
-    { label: '1w', value: '1w' }
+    { label: "1m", value: "1m" },
+    { label: "5m", value: "5m" },
+    { label: "15m", value: "15m" },
+    { label: "1h", value: "1h" },
+    { label: "4h", value: "4h" },
+    { label: "1d", value: "1d" },
+    { label: "1w", value: "1w" },
   ];
 
   const getBinanceInterval = (timeframe: string) => {
     const intervalMap: { [key: string]: string } = {
-      '1m': '1m',
-      '5m': '5m',
-      '15m': '15m',
-      '1h': '1h',
-      '4h': '4h',
-      '1d': '1d',
-      '1w': '1w'
+      "1m": "1m",
+      "5m": "5m",
+      "15m": "15m",
+      "1h": "1h",
+      "4h": "4h",
+      "1d": "1d",
+      "1w": "1w",
     };
-    return intervalMap[timeframe] || '1h';
+    return intervalMap[timeframe] || "1h";
   };
 
   const fetchCryptoData = async (symbol: string) => {
     const binanceSymbol = `${symbol}USDT`.toUpperCase();
-    
+
     try {
       setIsLoading(true);
       setError(null);
@@ -76,12 +88,18 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
       console.log(`🔄 Fetching Binance data for: ${binanceSymbol}`);
 
       const [tickerResponse, klinesResponse] = await Promise.all([
-        fetch(`https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`),
-        fetch(`https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${getBinanceInterval(selectedTimeframe)}&limit=100`)
+        fetch(
+          `https://api.binance.com/api/v3/ticker/24hr?symbol=${binanceSymbol}`
+        ),
+        fetch(
+          `https://api.binance.com/api/v3/klines?symbol=${binanceSymbol}&interval=${getBinanceInterval(
+            selectedTimeframe
+          )}&limit=100`
+        ),
       ]);
 
       if (!tickerResponse.ok || !klinesResponse.ok) {
-        throw new Error('Failed to fetch data from Binance');
+        throw new Error("Failed to fetch data from Binance");
       }
 
       const tickerData = await tickerResponse.json();
@@ -95,7 +113,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
         change24h: parseFloat(tickerData.priceChangePercent),
         volume24h: parseFloat(tickerData.volume),
         high24h: parseFloat(tickerData.highPrice),
-        low24h: parseFloat(tickerData.lowPrice)
+        low24h: parseFloat(tickerData.lowPrice),
       });
 
       const newCandleData: CandleData[] = klinesData.map((kline: any[]) => ({
@@ -104,55 +122,57 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
         high: parseFloat(kline[2]),
         low: parseFloat(kline[3]),
         close: parseFloat(kline[4]),
-        volume: parseFloat(kline[5])
+        volume: parseFloat(kline[5]),
       }));
 
       setCandleData(newCandleData);
       setIsLoading(false);
-
     } catch (error) {
-      console.error('❌ Error fetching Binance data:', error);
-      setError('Failed to fetch live data. Using simulated data.');
+      console.error("❌ Error fetching Binance data:", error);
+      setError("Failed to fetch live data. Using simulated data.");
       setIsLoading(false);
-      
+
       generateRealisticMockData(symbol);
     }
   };
 
   const generateRealisticMockData = (symbol: string) => {
     const basePrices: { [key: string]: number } = {
-      'BTC': 67000,
-      'ETH': 3500,
-      'SOL': 120,
-      'BNB': 600,
-      'ADA': 0.45,
-      'DOT': 6.5,
-      'XRP': 0.52
+      BTC: 67000,
+      ETH: 3500,
+      SOL: 120,
+      BNB: 600,
+      ADA: 0.45,
+      DOT: 6.5,
+      XRP: 0.52,
     };
 
     const basePrice = basePrices[symbol] || 100;
     const newCandleData: CandleData[] = [];
-    
-    let currentTime = Date.now() - (100 * 3600000); 
+
+    let currentTime = Date.now() - 100 * 3600000;
     let currentPriceValue = basePrice;
 
     for (let i = 0; i < 100; i++) {
       const time = currentTime + i * 3600000;
-      
-      const volatility = symbol === 'BTC' ? 0.02 : symbol === 'ETH' ? 0.03 : 0.05;
+
+      const volatility =
+        symbol === "BTC" ? 0.02 : symbol === "ETH" ? 0.03 : 0.05;
       const change = (Math.random() - 0.5) * basePrice * volatility;
       const open = currentPriceValue;
       const close = currentPriceValue + change;
-      const high = Math.max(open, close) + Math.random() * basePrice * volatility * 0.3;
-      const low = Math.min(open, close) - Math.random() * basePrice * volatility * 0.3;
-      
+      const high =
+        Math.max(open, close) + Math.random() * basePrice * volatility * 0.3;
+      const low =
+        Math.min(open, close) - Math.random() * basePrice * volatility * 0.3;
+
       newCandleData.push({
         time,
         open,
         high,
         low,
         close,
-        volume: Math.random() * 1000000 + 500000
+        volume: Math.random() * 1000000 + 500000,
       });
 
       currentPriceValue = close;
@@ -167,7 +187,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
       change24h: priceChange,
       volume24h: 750000,
       high24h: finalPrice * 1.08,
-      low24h: finalPrice * 0.92
+      low24h: finalPrice * 0.92,
     });
 
     setCandleData(newCandleData);
@@ -183,7 +203,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
       if (!isLoading) {
         fetchCryptoData(symbol);
       }
-    }, 30000); 
+    }, 30000);
 
     return () => clearInterval(interval);
   }, [symbol, isLoading]);
@@ -206,18 +226,22 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
     const chartWidth = width - padding.left - padding.right;
     const chartHeight = height - padding.top - padding.bottom;
 
-    const maxPrice = Math.max(...candleData.map(d => d.high));
-    const minPrice = Math.min(...candleData.map(d => d.low));
-    const priceRange = maxPrice - minPrice || 1; 
+    const maxPrice = Math.max(...candleData.map((d) => d.high));
+    const minPrice = Math.min(...candleData.map((d) => d.low));
+    const priceRange = maxPrice - minPrice || 1;
 
     const candleWidth = Math.max(2, chartWidth / candleData.length - 1);
-    
+
     const candles = candleData.map((candle, index) => {
       const x = padding.left + (index * chartWidth) / candleData.length;
-      const openY = padding.top + ((maxPrice - candle.open) / priceRange) * chartHeight;
-      const closeY = padding.top + ((maxPrice - candle.close) / priceRange) * chartHeight;
-      const highY = padding.top + ((maxPrice - candle.high) / priceRange) * chartHeight;
-      const lowY = padding.top + ((maxPrice - candle.low) / priceRange) * chartHeight;
+      const openY =
+        padding.top + ((maxPrice - candle.open) / priceRange) * chartHeight;
+      const closeY =
+        padding.top + ((maxPrice - candle.close) / priceRange) * chartHeight;
+      const highY =
+        padding.top + ((maxPrice - candle.high) / priceRange) * chartHeight;
+      const lowY =
+        padding.top + ((maxPrice - candle.low) / priceRange) * chartHeight;
 
       const isGreen = candle.close > candle.open;
       const bodyTop = Math.min(openY, closeY);
@@ -231,7 +255,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
             y1={highY}
             x2={x + candleWidth / 2}
             y2={lowY}
-            stroke={isGreen ? '#22c55e' : '#ef4444'}
+            stroke={isGreen ? "#22c55e" : "#ef4444"}
             strokeWidth="1"
           />
 
@@ -240,8 +264,8 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
             y={bodyTop}
             width={candleWidth}
             height={bodyHeight}
-            fill={isGreen ? '#22c55e' : '#ef4444'}
-            stroke={isGreen ? '#22c55e' : '#ef4444'}
+            fill={isGreen ? "#22c55e" : "#ef4444"}
+            stroke={isGreen ? "#22c55e" : "#ef4444"}
             strokeWidth="1"
           />
         </g>
@@ -249,7 +273,12 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
     });
 
     return (
-      <svg width="100%" height="100%" viewBox={`0 0 ${width} ${height}`} className="overflow-visible">
+      <svg
+        width="100%"
+        height="100%"
+        viewBox={`0 0 ${width} ${height}`}
+        className="overflow-visible"
+      >
         {[...Array(6)].map((_, i) => (
           <line
             key={`h-${i}`}
@@ -262,7 +291,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
             strokeWidth="0.5"
           />
         ))}
-        
+
         {[...Array(6)].map((_, i) => {
           const price = maxPrice - (i * priceRange) / 5;
           return (
@@ -283,38 +312,57 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
   };
 
   return (
-    <Card className={`bg-card/95 backdrop-blur-sm border-border/50 ${className}`}>
+    <Card
+      className={`bg-card/95 backdrop-blur-sm border-border/50 ${className}`}
+    >
       <div className="p-4 border-b border-border/50">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
-              <h2 className="text-xl font-bold text-foreground">{currentPrice.symbol}/USDT</h2>
-              <Badge variant="outline" className="text-xs">Spot</Badge>
+              <h2 className="text-xl max-md:text-sm font-bold text-foreground">
+                {currentPrice.symbol}/USDT
+              </h2>
+              <Badge variant="outline" className="text-xs">
+                Spot
+              </Badge>
               {error && (
-                <Badge variant="outline" className="text-xs bg-yellow-500/20 text-yellow-600">
+                <Badge
+                  variant="outline"
+                  className="text-xs bg-yellow-500/20 text-yellow-600"
+                >
                   Simulated
                 </Badge>
               )}
             </div>
-            
+
             <div className="flex items-center gap-4">
               {isLoading ? (
                 <RefreshCw className="h-6 w-6 animate-spin text-muted-foreground" />
               ) : (
-                <div className="text-2xl font-mono font-bold text-foreground">
-                  ${currentPrice.price.toLocaleString(undefined, { 
-                    minimumFractionDigits: 2, 
-                    maximumFractionDigits: currentPrice.price < 1 ? 4 : 2 
+                <div className="text-2xl max-md:text-sm font-mono font-bold text-foreground">
+                  $
+                  {currentPrice.price.toLocaleString(undefined, {
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: currentPrice.price < 1 ? 4 : 2,
                   })}
                 </div>
               )}
-              
+
               {!isLoading && (
-                <div className={`flex items-center gap-1 px-2 py-1 rounded text-sm font-medium ${
-                  isPositive ? 'bg-success/20 text-success' : 'bg-destructive/20 text-destructive'
-                }`}>
-                  {isPositive ? <TrendingUp className="h-4 w-4" /> : <TrendingDown className="h-4 w-4" />}
-                  {isPositive ? '+' : ''}{currentPrice.change24h.toFixed(2)}%
+                <div
+                  className={`flex items-center gap-1 px-2 py-1 rounded text-sm font-medium ${
+                    isPositive
+                      ? "bg-success/20 text-success"
+                      : "bg-destructive/20 text-destructive"
+                  }`}
+                >
+                  {isPositive ? (
+                    <TrendingUp className="h-4 w-4" />
+                  ) : (
+                    <TrendingDown className="h-4 w-4" />
+                  )}
+                  {isPositive ? "+" : ""}
+                  {currentPrice.change24h.toFixed(2)}%
                 </div>
               )}
             </div>
@@ -322,28 +370,30 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
 
           <div className="flex items-center gap-2">
             <Button
-              variant={chartType === 'candlestick' ? 'default' : 'outline'}
+              variant={chartType === "candlestick" ? "default" : "outline"}
               size="sm"
-              onClick={() => setChartType('candlestick')}
+              onClick={() => setChartType("candlestick")}
             >
               <BarChart3 className="h-4 w-4 mr-1" />
               Candles
             </Button>
             <Button
-              variant={chartType === 'line' ? 'default' : 'outline'}
+              variant={chartType === "line" ? "default" : "outline"}
               size="sm"
-              onClick={() => setChartType('line')}
+              onClick={() => setChartType("line")}
             >
               <LineChart className="h-4 w-4 mr-1" />
               Line
             </Button>
-            <Button 
-              variant="outline" 
+            <Button
+              variant="outline"
               size="sm"
               onClick={() => fetchCryptoData(symbol)}
               disabled={isLoading}
             >
-              <RefreshCw className={`h-4 w-4 ${isLoading ? 'animate-spin' : ''}`} />
+              <RefreshCw
+                className={`h-4 w-4 ${isLoading ? "animate-spin" : ""}`}
+              />
             </Button>
           </div>
         </div>
@@ -352,13 +402,19 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
           <div>
             <span className="text-muted-foreground">24h High</span>
             <div className="font-mono font-medium">
-              ${currentPrice.high24h.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              $
+              {currentPrice.high24h.toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
           <div>
             <span className="text-muted-foreground">24h Low</span>
             <div className="font-mono font-medium">
-              ${currentPrice.low24h.toLocaleString(undefined, { maximumFractionDigits: 2 })}
+              $
+              {currentPrice.low24h.toLocaleString(undefined, {
+                maximumFractionDigits: 2,
+              })}
             </div>
           </div>
           <div>
@@ -368,11 +424,17 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
             </div>
           </div>
           <div className="flex items-center gap-2">
-            <div className={`w-2 h-2 rounded-full animate-pulse ${
-              error ? 'bg-yellow-500' : 'bg-success'
-            }`} />
-            <span className={`font-medium ${error ? 'text-yellow-600' : 'text-success'}`}>
-              {error ? 'Simulated' : 'Live'}
+            <div
+              className={`w-2 h-2 rounded-full animate-pulse ${
+                error ? "bg-yellow-500" : "bg-success"
+              }`}
+            />
+            <span
+              className={`font-medium ${
+                error ? "text-yellow-600" : "text-success"
+              }`}
+            >
+              {error ? "Simulated" : "Live"}
             </span>
           </div>
         </div>
@@ -381,7 +443,7 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
           {timeframes.map((tf) => (
             <Button
               key={tf.value}
-              variant={selectedTimeframe === tf.value ? 'default' : 'ghost'}
+              variant={selectedTimeframe === tf.value ? "default" : "ghost"}
               size="sm"
               onClick={() => setSelectedTimeframe(tf.value)}
               className="px-3 py-1 h-8 text-xs font-medium"
@@ -398,19 +460,24 @@ export const ProfessionalChart = ({ symbol, className }: ProfessionalChartProps)
           <div className="absolute inset-0 flex items-center justify-center bg-background/80 backdrop-blur-sm z-10">
             <div className="flex items-center gap-2">
               <RefreshCw className="w-4 h-4 animate-spin" />
-              <span className="text-sm text-muted-foreground">Loading market data...</span>
+              <span className="text-sm text-muted-foreground">
+                Loading market data...
+              </span>
             </div>
           </div>
         )}
-        
+
         {error && !isLoading && (
           <div className="absolute top-4 right-4 z-10">
-            <Badge variant="outline" className="bg-yellow-500/20 text-yellow-600 text-xs">
+            <Badge
+              variant="outline"
+              className="bg-yellow-500/20 text-yellow-600 text-xs"
+            >
               {error}
             </Badge>
           </div>
         )}
-        
+
         <div className="w-full h-full rounded-lg border border-border/30 bg-gradient-to-br from-card/80 to-background/60 backdrop-blur-sm p-4">
           {drawChart()}
         </div>

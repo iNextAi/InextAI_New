@@ -6,34 +6,38 @@ import { useNavigate } from "react-router-dom";
 import { ProfessionalChart } from "@/components/trading/ProfessionalChart";
 import { OrderBook } from "@/components/trading/OrderBook";
 import { TradingPanel } from "@/components/trading/TradingPanel";
+import { IoMenu, IoClose } from "react-icons/io5";
 
 const TradingSimulatorNew = () => {
   const navigate = useNavigate();
-  const [selectedSymbol, setSelectedSymbol] = useState('BTC/USDT');
+  const [selectedSymbol, setSelectedSymbol] = useState("BTC/USDT");
   const [currentPrice, setCurrentPrice] = useState(67000);
   const [interval, setInterval] = useState("1m");
-  
-  const [binanceSymbol, setBinanceSymbol] = useState('BTCUSDT');
+
+  const [binanceSymbol, setBinanceSymbol] = useState("BTCUSDT");
   const [orderBook, setOrderBook] = useState({ bids: [], asks: [] });
   const [trades, setTrades] = useState([]);
 
   const cryptoSymbols = [
-    { symbol: 'BTC/USDT', name: 'Bitcoin', price: 67000 },
-    { symbol: 'ETH/USDT', name: 'Ethereum', price: 3200 },
-    { symbol: 'SOL/USDT', name: 'Solana', price: 120 },
-    { symbol: 'ADA/USDT', name: 'Cardano', price: 0.45 },
+    { symbol: "BTC/USDT", name: "Bitcoin", price: 67000 },
+    { symbol: "ETH/USDT", name: "Ethereum", price: 3200 },
+    { symbol: "SOL/USDT", name: "Solana", price: 120 },
+    { symbol: "ADA/USDT", name: "Cardano", price: 0.45 },
   ];
 
   const toBinanceSymbol = (symbol) => symbol.replace("/", "").toUpperCase();
   const formatPrice = (p) => {
     if (typeof p !== "number") return "-";
-    if (p > 1000) return p.toLocaleString(undefined, { maximumFractionDigits: 0 });
+    if (p > 1000)
+      return p.toLocaleString(undefined, { maximumFractionDigits: 0 });
     if (p > 1) return p.toLocaleString(undefined, { maximumFractionDigits: 2 });
     return p.toLocaleString(undefined, { maximumFractionDigits: 4 });
   };
 
   useEffect(() => {
-    const selectedCrypto = cryptoSymbols.find(c => c.symbol === selectedSymbol);
+    const selectedCrypto = cryptoSymbols.find(
+      (c) => c.symbol === selectedSymbol
+    );
     if (selectedCrypto) {
       setCurrentPrice(selectedCrypto.price);
       setBinanceSymbol(toBinanceSymbol(selectedSymbol));
@@ -44,26 +48,28 @@ const TradingSimulatorNew = () => {
   const bestAsk = orderBook.asks?.[0]?.price || 0;
 
   return (
-    <div className="h-screen bg-[#0b1426] text-white flex flex-col overflow-hidden">
+    <div className="min-h-screen bg-[#0b1426] text-white flex flex-col overflow-hidden">
       {/* Compact Header */}
-      <div className="bg-[#1e2532] border-b border-[#2a2e39] px-4 py-2 flex-shrink-0">
+      <div className="bg-[#1e2532] border-b border-[#2a2e39] px-4 max-md:px-2 py-2 flex-shrink-0">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <Button 
-              variant="ghost" 
-              size="sm" 
+          <div className="flex items-center gap-4 max-md:gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
               onClick={() => navigate("/")}
-              className="hover:bg-[#2a2e39] text-gray-300 h-8 px-3"
+              className="hover:bg-[#2a2e39] text-gray-300 h-8 px-3 max-md:px-2"
             >
               <ArrowLeft className="h-4 w-4 mr-2" />
-              Dashboard
+              <span className="max-md:hidden">Dashboard</span>
             </Button>
-            
+
             <div className="flex items-center gap-3">
-              <h1 className="text-lg font-semibold text-white">Trading Simulator</h1>
+              <h1 className="text-lg max-md:text-xs_ max-md:hidden font-semibold text-white">
+                Trading Simulator
+              </h1>
               <Badge className="bg-green-500/20 text-green-400 border-green-500/30 text-xs">
                 <Activity className="h-3 w-3 mr-1" />
-                Live
+                <span className="max-md:hidden">Live</span>
               </Badge>
             </div>
 
@@ -71,7 +77,7 @@ const TradingSimulatorNew = () => {
             <select
               value={selectedSymbol}
               onChange={(e) => setSelectedSymbol(e.target.value)}
-              className="bg-[#2a2e39] border border-[#3a3f4b] rounded px-3 py-1 text-white text-sm h-8"
+              className="bg-[#2a2e39] border border-[#3a3f4b] rounded px-3 max-md:px-2 py-1 text-white text-sm max-md:text-xs h-8"
               aria-label="Select cryptocurrency symbol"
             >
               {cryptoSymbols.map((crypto) => (
@@ -82,10 +88,10 @@ const TradingSimulatorNew = () => {
             </select>
 
             {/* Interval Selector */}
-            <select 
-              value={interval} 
+            <select
+              value={interval}
               onChange={(e) => setInterval(e.target.value)}
-              className="bg-[#2a2e39] border border-[#3a3f4b] rounded px-3 py-1 text-white text-sm h-8"
+              className="bg-[#2a2e39] border border-[#3a3f4b] rounded px-3 max-md:px-2 py-1 text-white text-sm max-md:text-xs h-8"
               aria-label="Select chart interval"
             >
               <option value="1m">1m</option>
@@ -98,12 +104,16 @@ const TradingSimulatorNew = () => {
 
           <div className="flex items-center gap-3">
             <div className="text-right">
-              <div className="text-xl font-mono font-bold text-white">
+              <div className="text-xl max-md:text-sm font-mono font-bold text-white">
                 {formatPrice(currentPrice)}
               </div>
               <div className="text-xs text-green-400">+2.34%</div>
             </div>
-            <Button variant="ghost" size="sm" className="h-8 w-8 p-0 border border-[#3a3f4b]">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-8 w-8 p-0 border border-[#3a3f4b]"
+            >
               <Settings className="h-4 w-4" />
             </Button>
           </div>
@@ -112,26 +122,29 @@ const TradingSimulatorNew = () => {
 
       {/* Main Trading Interface */}
       <div className="flex-1 flex min-h-0 p-2 gap-2">
-        
         {/* Left Sidebar - Compact */}
-        <div className="w-64 bg-[#1e2532] rounded-lg border border-[#2a2e39] flex flex-col">
+        <div className="w-64 bg-[#1e2532] rounded-lg border border-[#2a2e39] flex flex-col max-md:hidden">
           {/* Watchlist */}
           <div className="p-3 border-b border-[#2a2e39]">
-            <div className="text-sm font-medium text-gray-300 mb-2">Watchlist</div>
+            <div className="text-sm font-medium text-gray-300 mb-2">
+              Watchlist
+            </div>
             <div className="space-y-1">
               {cryptoSymbols.map((crypto) => (
                 <div
                   key={crypto.symbol}
                   onClick={() => setSelectedSymbol(crypto.symbol)}
                   className={`flex items-center justify-between p-2 rounded cursor-pointer text-sm ${
-                    selectedSymbol === crypto.symbol 
-                      ? "bg-[#2a2e39] text-white" 
+                    selectedSymbol === crypto.symbol
+                      ? "bg-[#2a2e39] text-white"
                       : "text-gray-400 hover:bg-[#2a2e39] hover:text-gray-300"
                   }`}
                 >
                   <span>{crypto.symbol}</span>
                   <span className="font-mono">
-                    {selectedSymbol === crypto.symbol ? formatPrice(currentPrice) : "-"}
+                    {selectedSymbol === crypto.symbol
+                      ? formatPrice(currentPrice)
+                      : "-"}
                   </span>
                 </div>
               ))}
@@ -140,8 +153,10 @@ const TradingSimulatorNew = () => {
 
           {/* Order Book */}
           <div className="flex-1 p-3">
-            <div className="text-sm font-medium text-gray-300 mb-3">Order Book</div>
-            
+            <div className="text-sm font-medium text-gray-300 mb-3">
+              Order Book
+            </div>
+
             {/* Asks */}
             <div className="space-y-1 mb-4">
               <div className="text-xs text-red-400 font-medium mb-1">Asks</div>
@@ -160,10 +175,14 @@ const TradingSimulatorNew = () => {
 
             {/* Bids */}
             <div className="space-y-1">
-              <div className="text-xs text-green-400 font-medium mb-1">Bids</div>
+              <div className="text-xs text-green-400 font-medium mb-1">
+                Bids
+              </div>
               {orderBook.bids?.slice(0, 8).map((bid, i) => (
                 <div key={i} className="flex justify-between text-xs">
-                  <span className="text-green-400">{formatPrice(bid.price)}</span>
+                  <span className="text-green-400">
+                    {formatPrice(bid.price)}
+                  </span>
                   <span className="text-gray-400">{bid.size.toFixed(4)}</span>
                 </div>
               ))}
@@ -175,16 +194,18 @@ const TradingSimulatorNew = () => {
         <div className="flex-1 bg-[#1e2532] rounded-lg border border-[#2a2e39] flex flex-col min-h-0">
           {/* Chart Header */}
           <div className="flex items-center justify-between p-3 border-b border-[#2a2e39]">
-            <div className="flex items-center gap-4">
-              <div className="text-sm font-medium text-white">{selectedSymbol}</div>
+            <div className="flex items-center gap-4 max-md:overflow-x-auto">
+              <div className="text-sm font-medium text-white">
+                {selectedSymbol}
+              </div>
               <div className="flex gap-1">
-                {['1m', '5m', '15m', '1h', '4h', '1D'].map((int) => (
+                {["1m", "5m", "15m", "1h", "4h", "1D"].map((int) => (
                   <button
                     key={int}
                     onClick={() => setInterval(int.toLowerCase())}
                     className={`px-2 py-1 text-xs rounded ${
-                      interval === int.toLowerCase() 
-                        ? "bg-[#3a3f4b] text-white" 
+                      interval === int.toLowerCase()
+                        ? "bg-[#3a3f4b] text-white"
                         : "text-gray-400 hover:text-white"
                     }`}
                   >
@@ -201,19 +222,16 @@ const TradingSimulatorNew = () => {
           </div>
 
           {/* Chart */}
-          <div className="flex-1 min-h-0">
-            <ProfessionalChart 
-              symbol={selectedSymbol}
-              className="h-full"
-            />
+          <div className="flex-1 min-h-fit overflow-auto">
+            <ProfessionalChart symbol={selectedSymbol} className="h-full" />
           </div>
         </div>
 
         {/* Right Panel - Trading */}
-        <div className="w-80 bg-[#1e2532] rounded-lg border border-[#2a2e39] flex flex-col">
+        <div className="w-80 bg-[#1e2532] rounded-lg border border-[#2a2e39] flex flex-col max-md:hidden  ">
           {/* Trading Panel */}
           <div className="flex-1">
-            <TradingPanel 
+            <TradingPanel
               symbol={selectedSymbol}
               currentPrice={currentPrice}
               className="h-full"
@@ -222,14 +240,22 @@ const TradingSimulatorNew = () => {
 
           {/* Recent Trades */}
           <div className="p-3 border-t border-[#2a2e39]">
-            <div className="text-sm font-medium text-gray-300 mb-2">Recent Trades</div>
+            <div className="text-sm font-medium text-gray-300 mb-2">
+              Recent Trades
+            </div>
             <div className="space-y-1 max-h-32 overflow-auto">
               {trades.slice(0, 6).map((trade, i) => (
                 <div key={i} className="flex justify-between text-xs">
-                  <span className={trade.side === "buy" ? "text-green-400" : "text-red-400"}>
+                  <span
+                    className={
+                      trade.side === "buy" ? "text-green-400" : "text-red-400"
+                    }
+                  >
                     {trade.side}
                   </span>
-                  <span className="font-mono text-gray-300">{formatPrice(trade.price)}</span>
+                  <span className="font-mono text-gray-300">
+                    {formatPrice(trade.price)}
+                  </span>
                   <span className="text-gray-400">{trade.size.toFixed(4)}</span>
                 </div>
               ))}
@@ -240,7 +266,7 @@ const TradingSimulatorNew = () => {
 
       {/* Compact Footer */}
       <div className="bg-[#1e2532] border-t border-[#2a2e39] px-4 py-2 flex-shrink-0">
-        <div className="flex items-center justify-between text-xs text-gray-400">
+        <div className="flex max-md:flex-col items-center justify-between text-xs text-gray-400">
           <div className="flex items-center gap-6">
             <div className="flex items-center gap-2">
               <div className="w-2 h-2 bg-green-500 rounded-full"></div>
@@ -250,7 +276,10 @@ const TradingSimulatorNew = () => {
             <span>Active Pairs: 650+</span>
           </div>
           <div className="flex items-center gap-4">
-            <Badge variant="outline" className="bg-blue-500/10 text-blue-400 border-blue-500/30 text-xs">
+            <Badge
+              variant="outline"
+              className="bg-blue-500/10 text-blue-400 border-blue-500/30 text-xs"
+            >
               Simulation
             </Badge>
             <span>Real-time data • 0ms latency</span>

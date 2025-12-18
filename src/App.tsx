@@ -26,7 +26,7 @@ const App = () => (
         <Routes>
           {/* 👇 NEW LANDING PAGE */}
           <Route path="/" element={<Dashboard />} />
-          
+
           {/* 🔄 MOVED DASHBOARD TO ITS OWN ROUTE */}
           <Route path="/dashboard" element={<Dashboard />} />
 
@@ -44,6 +44,5 @@ const App = () => (
     </TooltipProvider>
   </QueryClientProvider>
 );
-
 
 export default App;
