@@ -1,5 +1,9 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Brain, Zap, RotateCcw, DollarSign, AlertTriangle, Info } from "lucide-react";
+import { useEffect } from "react"
+import axios from "axios"
+import tradingAPI from "@/services/api";
+
 
 export function EmotionalTriggers() {
   const metrics = [
@@ -10,13 +14,25 @@ export function EmotionalTriggers() {
   ];
 
   // Radar chart data (0-100 scale)
-  const radarData = {
-    greed: 20,
-    confidence: 75,
-    fear: 30,
-    revenge: 15,
-    fomo: 25
-  };
+  let radarData;
+  useEffect(() => {
+    try {
+        const getRadarData = async () => {
+          radarData = await tradingAPI.getEmotionalTriggers()
+        }
+        getRadarData()
+    } catch (error) {
+      console.error(error)
+    }
+  }, []) 
+
+  // const radarData = {
+  //   greed: 20,
+  //   confidence: 75,
+  //   fear: 30,
+  //   revenge: 15,
+  //   fomo: 25
+  // };
 
   // Convert to coordinates for pentagon
   const centerX = 100;

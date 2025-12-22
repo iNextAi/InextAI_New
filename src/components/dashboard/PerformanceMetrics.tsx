@@ -2,12 +2,30 @@ import { Card } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Shield, Lock } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import axios from 'axios';
+import { useEffect, useState } from 'react';
+import tradingAPI from '@/services/api';
 
 interface PerformanceMetricsProps {
   isWalletConnected?: boolean;
 }
 
-export function PerformanceMetrics({ isWalletConnected = false }: PerformanceMetricsProps) {
+export function PerformanceMetrics({
+  isWalletConnected = false,
+}: PerformanceMetricsProps) {
+  const [performanceData, setPerformanceData] = useState([]);
+  useEffect(() => {
+    try {
+      const getPerformanceMetrics = async () => {
+        const res = await tradingAPI.getPerformanceMetrics();
+        console.log(res)
+        setPerformanceData(res);
+      };
+      getPerformanceMetrics()
+    } catch (err) {
+      console.log('Error', err);
+    }
+  }, []);
   if (!isWalletConnected) {
     return (
       <Card className="h-full bg-background/50 border-blue-900/20 flex flex-col items-center justify-center p-6 text-center">
