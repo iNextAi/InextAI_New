@@ -5,7 +5,7 @@ import { Wallet, ChevronRight } from "lucide-react";
 interface ConnectWalletDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
-  onConnect?: (walletName: string) => void;
+  onConnect?: () => void;
 }
 
 export function ConnectWalletDialog({ open, onOpenChange, onConnect }: ConnectWalletDialogProps) {
@@ -14,8 +14,8 @@ export function ConnectWalletDialog({ open, onOpenChange, onConnect }: ConnectWa
     { name: "Solana Trades", icon: "◎" }
   ];
 
-  const handleConnect = (walletName: string) => {
-    onConnect(walletName);
+  const handleConnect = () => {
+    onConnect?.();
   };
 
   return (
@@ -31,7 +31,7 @@ export function ConnectWalletDialog({ open, onOpenChange, onConnect }: ConnectWa
               key={wallet.name}
               variant="outline"
               className="w-full justify-between glass-card border-primary/20 hover:border-primary/40 hover:bg-primary/5 h-14 text-base group"
-              onClick={() => handleConnect(wallet.name)}
+              onClick={handleConnect}
             >
               <div className="flex items-center gap-3">
                 <span className="text-2xl">{wallet.icon}</span>

@@ -2,7 +2,7 @@
 import axios, { AxiosInstance, AxiosError } from 'axios';
 
 // Base URL for your backend
-export const BASE_URL = "https://ebts.onrender.com"
+const BASE_URL = 'http://127.0.0.1:5000';
 
 // Create axios instance with default config
 const apiClient: AxiosInstance = axios.create({
@@ -87,21 +87,15 @@ export interface EmotionResponse {
 }
 
 export interface WalletConnectRequest {
-  walletAddress: string,
-        walletType: WalletType,
-        signature: string,
-        message: string,
-        chainId: 1
+  walletAddress: string;
+  walletType: 'metamask' | 'phantom' | 'internet_identity';
 }
-export type WalletType = 'metamask' | 'phantom' | 'internet_identity' | "injected" | "phantom" | "solflare" | "walletconnect";
-
 
 export interface WalletConnectResponse {
   status: string;
   userId: string;
   walletAddress: string;
-  walletType: string; 
-   
+  walletType: string;
 }
 
 export interface PerformanceMetrics {
