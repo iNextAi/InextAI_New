@@ -29,12 +29,9 @@ const Index = () => {
 const handleWalletConnect = async (walletName: string) => {
   try {
     let address: string | undefined;
-    let walletType: WalletType = 'metamask'; // Using your type from earlier
+    let walletType: WalletType = 'metamask';
     let signature: string | undefined;
     const message = `Login to Mindful Trading at ${new Date().toISOString()}`;
-
-    console.log("Starting connection for:", walletName);
-
     if (walletName === "EVM Trades") {
       if (window.ethereum) {
         // 1. Get Address

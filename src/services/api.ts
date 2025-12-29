@@ -225,7 +225,7 @@ export interface PerformanceTimeseries {
 class TradingAPI {
   // ========== Wallet Management ==========
   async connectWallet(data: WalletConnectRequest): Promise<WalletConnectResponse> {
-    const response = await apiClient.post('/api/connect_wallet', data);
+    const response = await apiClient.post('/api/connect-wallet', data);
     return response.data;
   }
 
