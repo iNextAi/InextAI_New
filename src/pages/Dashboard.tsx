@@ -8,17 +8,28 @@ import { ConnectWalletDialog } from "@/components/dashboard/ConnectWalletDialog"
 import { MoodWellnessDialog } from "@/components/dashboard/MoodWellnessDialog";
 import { Button } from "@/components/ui/button";
 import { Wallet } from "lucide-react";
+import { useUser } from "@/context/userContext";
 
 const Index = () => {
   const [showWalletDialog, setShowWalletDialog] = useState(false);
   const [showMoodDialog, setShowMoodDialog] = useState(false);
   const [isWalletConnected, setIsWalletConnected] = useState(false);
+  const { user } = useUser();
+
+  useEffect(() => {
+    // Check if wallet is already connected from localStorage
+    if (user?.walletAddress) {
+      setIsWalletConnected(true);
+    }
+  }, [user?.walletAddress]);
 
   const handleWalletConnect = () => {
     setShowWalletDialog(true);
   };
 
-  const handleWalletConnected = () => {
+  const handleWalletConnected = (walletAddress?: string) => {
+    // Wallet is already saved to context in LandingPage
+    // This just handles local UI state
     setIsWalletConnected(true);
     setShowWalletDialog(false);
     setTimeout(() => {
